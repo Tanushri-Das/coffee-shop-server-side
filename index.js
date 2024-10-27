@@ -22,12 +22,14 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
     const usersCollection = client.db("coffeeshopwebsite").collection("users");
     const menuCollection = client.db("coffeeshopwebsite").collection("menu");
     const cartCollection = client.db("coffeeshopwebsite").collection("carts");
+    const wishlistCollection = client
+      .db("coffeeshopwebsite")
+      .collection("wishlists");
 
     // user related api
     app.post("/users", async (req, res) => {
@@ -131,6 +133,30 @@ async function run() {
           .send({ message: "An error occurred while updating cart" });
       }
     });
+
+    // wishlist related api
+    app.post("/wishlists", async (req, res) => {
+      const cartItem = req.body;
+      const result = await wishlistCollection.insertOne(cartItem);
+      console.log(result);
+      res.send(result);
+    });
+
+    // verifyJWT add korte hobe
+    app.get("/wishlists", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await wishlistCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.delete("/wishlists/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await wishlistCollection.deleteOne(query);
+      res.send(result);
+    });
+    
   } finally {
   }
 }
