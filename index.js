@@ -39,7 +39,9 @@ async function run() {
     const sponsorshipCollection = client
       .db("coffeeshopwebsite")
       .collection("sponsorship");
-      const contactsCollection = client.db("coffeeshopwebsite").collection("contacts");
+    const contactsCollection = client
+      .db("coffeeshopwebsite")
+      .collection("contacts");
     const wishlistCollection = client
       .db("coffeeshopwebsite")
       .collection("wishlists");
@@ -188,6 +190,13 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await wishlistCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // add review
+    app.post("/reviews", async (req, res) => {
+      const newItem = req.body;
+      const result = await reviewsCollection.insertOne(newItem);
       res.send(result);
     });
   } finally {
