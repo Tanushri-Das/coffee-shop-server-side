@@ -27,6 +27,19 @@ async function run() {
     const usersCollection = client.db("coffeeshopwebsite").collection("users");
     const menuCollection = client.db("coffeeshopwebsite").collection("menu");
     const cartCollection = client.db("coffeeshopwebsite").collection("carts");
+    const categoriesCollection = client
+      .db("coffeeshopwebsite")
+      .collection("categories");
+    const reviewsCollection = client
+      .db("coffeeshopwebsite")
+      .collection("reviews");
+    const featuresCollection = client
+      .db("coffeeshopwebsite")
+      .collection("features");
+    const sponsorshipCollection = client
+      .db("coffeeshopwebsite")
+      .collection("sponsorship");
+      const contactsCollection = client.db("coffeeshopwebsite").collection("contacts");
     const wishlistCollection = client
       .db("coffeeshopwebsite")
       .collection("wishlists");
@@ -77,7 +90,28 @@ async function run() {
         res.status(500).send({ error: true, message: "An error occurred" });
       }
     });
-
+    // home
+    app.get("/categories", async (req, res) => {
+      const result = await categoriesCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/reviews", async (req, res) => {
+      const result = await reviewsCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/features", async (req, res) => {
+      const result = await featuresCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/sponsors", async (req, res) => {
+      const result = await sponsorshipCollection.find().toArray();
+      res.send(result);
+    });
+    app.post("/contacts", async (req, res) => {
+      const newItem = req.body;
+      const result = await contactsCollection.insertOne(newItem);
+      res.send(result);
+    });
     // cart related api
     app.post("/carts", async (req, res) => {
       const item = req.body;
@@ -156,7 +190,6 @@ async function run() {
       const result = await wishlistCollection.deleteOne(query);
       res.send(result);
     });
-    
   } finally {
   }
 }
